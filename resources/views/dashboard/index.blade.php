@@ -6,9 +6,9 @@
     <div class="row">
         <div class="col-md-12">
             <center>
-                <div class="profilPicture">
-                    <img src="assets/img/gucc.png" style="width: 25%;" alt="#">
-                    <h2><b>GUNADARMA UNIVERSITY COMPUTING CENTER</b></h2>
+                <div class="profilPicture gap">
+                    <img src="assets/img/logoBapsii.png" style="width: 20%; margin-bottom: 20px" alt="#">
+                    <h2 class="text-uppercase"><b>BIRO ADMINISTRASI PERENCANAAN DAN SISTEM INFORMASI</b></h2>
                     <!-- <marquee width="50%" direction="left">[Ubah Text Berjalan Halaman Depan Disini Pada Setting Aplikasi]</marquee> -->
                 </div>
             </center>

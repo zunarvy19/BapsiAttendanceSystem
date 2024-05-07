@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-md  navbar-dark py-3" style="background-color: #4e73df ">
+<nav class="navbar navbar-expand-md  navbar-dark py-3" style="background-color: #890082 ">
     <div class="container">
-        <a class="navbar-brand bg-transparent fw-bold" href="{{ route('home.index') }}"><img src="/assets/img/gucc.png" alt="logo" style ="height:35px">  | GUCC</a>
+        <a class="navbar-brand bg-transparent fw-bold" href="{{ route('home.index') }}"><img src="/assets/img/logoBapsi4.png" alt="logo" style ="height:35px"></a>
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
             aria-label="Toggle navigation">

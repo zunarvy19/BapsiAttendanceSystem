@@ -11,9 +11,9 @@
         <div class="row">
             <div class="col-md-6">
                 <center>
-                    <div class="profilePicture">
-                        <img src="assets/img/gucc.png" style="width: 50%;" alt="#">
-                        <h2><b>GUNADARMA UNIVERSITY COMPUTING CENTER</b></h2>
+                    <div class="profilePicture my-auto">
+                        <img src="assets/img/logoBapsii.png" style="width: 50%; margin-bottom: 20px;" alt="#">
+                        <h2><b class="text-uppercase">Biro Administrasi Perencanaan dan Sistem Informasi</b></h2>
                     </div>
                 </center>
             </div>
