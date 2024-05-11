@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'emp@gmail.com',
             'password' => bcrypt('password'),
             'role_id' => Role::where('name', 'user')->first('id'),
-            'position_id' => Position::select('id')->inRandomOrder()->first()->id,
+            'position_id' => Position::where('name', "Pegawai \"Biasa\"")->first('id'),
         ]);
         \App\Models\User::factory(1)->create([
             'role_id' => Role::where('name', 'operator')->first('id'),
