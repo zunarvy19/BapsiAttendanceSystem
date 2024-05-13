@@ -6,51 +6,50 @@
 
 @section('content')
 
-<div class="w-100">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <center>
-                    <div class="profilePicture my-auto">
-                        <img src="assets/img/logoBapsii.png" style="width: 50%; margin-bottom: 20px;" alt="#">
-                        <h2><b class="text-uppercase">Biro Administrasi Perencanaan dan Sistem Informasi</b></h2>
-                    </div>
-                </center>
-            </div>
-            <div class="col-md-6">
-                <main class="form-signin w-100 m-auto">
-                    <form method="POST" action="{{ route('auth.login') }}" id="login-form">
-                        @csrf
-                        <h1 class="h3 mb-3 fw-bold text-center text-uppercase">Login</h1>
+<div class="wrapper">
+    <div class="container main">
+      <div class="row">
+        <div class="col-md-6 side-image">
+          <img src="https://unsplash.com/photos/two-teal-and-white-skyscrapers-_wpce-AsLxk" alt="">
+          <div class="text">
+            <p>Biro Administrasi dan Perencanaan Sistem Informasi</p>
+          </div>
 
-                        <div class="form-floating">
-                            <input type="email" class="form-control" id="floatingInputEmail" name="email"
-                                placeholder="name@example.com">
-                            <label for="floatingInputEmail">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" class="form-control" id="floatingPassword" name="password"
-                                placeholder="Password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="remember" id="flexCheckRemember">
-                            <label class="form-check-label" for="flexCheckRemember">
-                                Ingatkan Saya di Perangkat ini
-                            </label>
-                        </div>
-
-                        <button class="w-100 btn btn-primary" type="submit" id="login-form-button">Masuk</button>
-                        <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
-                    </form>
-                </main>
-            </div>
         </div>
+
+        <div class="col-md-6 right">
+
+          <div class="input-box">
+
+            <header>Login</header>
+            <form action="{{route('auth.login')}}" method="post" id="login-form">
+              @csrf
+              <div class="input-field">
+                <input type="text" class="input" id="email" required="" autocomplete="off" name="email">
+                <label for="floatingInputEmail">Email</label>
+              </div>
+              <div class="input-field">
+                <input type="password" class="input" id="pass" required="" name="password">
+                <label for="pass">Password</label>
+              </div>
+
+              <div class="form-check mb-5 mt-3">
+                <input class="form-check-input" type="checkbox" name="remember" id="flexCheckRemember">
+                <label class="form-check-label" for="flexCheckRemember">
+                  Ingatkan Saya di Perangkat ini
+                </label>
+              </div>
+
+              <div class="input-field">
+                <button type="submit" class="submit" id="login-form-button">Masuk</button>
+                <p class=" mb-3 text-muted">&copy; 2024</p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-
-
-</div>
+  </div>
 @endsection
 
 @push('script')
