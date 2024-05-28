@@ -12,7 +12,7 @@
         <div class="col-md-6 side-image">
           <img src="https://unsplash.com/photos/two-teal-and-white-skyscrapers-_wpce-AsLxk" alt="">
           <div class="text">
-            <p>Biro Administrasi dan Perencanaan Sistem Informasi</p>
+            <h3>Biro Administrasi Perencanaan dan Sistem Informasi</h3>
           </div>
 
         </div>

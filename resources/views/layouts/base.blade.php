@@ -9,8 +9,8 @@
 
     @include('partials.styles')
     @stack('style')
-    <link rel="icon" type="image/png" href="assets/img/gucc.png"/>
-    <title>{{ $title }} | GUCC</title>
+    <link rel="icon" type="image/png" href="assets/img/Group.png"/>
+    <title>{{ $title }} | BAPSI</title>
 </head>
 
 <body>

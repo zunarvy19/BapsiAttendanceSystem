@@ -14,7 +14,21 @@
             </center>
         </div>
     </div>
-    <div class="row mt-5">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow m-1">
+                <div class="card-body">
+                    <center>
+                        <div id="date-and-clock">
+                            <h3 id="clocknow"></h3>
+                            <h3 id="datenow"></h3>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 justify-content-center">
         <div class="col-md-3">
             <div class="card shadow m-1">
                 <div class="card-body">
@@ -31,20 +45,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow m-1">
-                <div class="card-body">
-                    <center>
-                        <div id="date-and-clock mt-3">
-                        <h3 id="clocknow"></h3>
-                        <h3 id="datenow"></h3>
-                    </center>
-                    
-                </div>
-            </div>
-        </div>
     </div>
 </div>
+
+<style>
+    #date-and-clock {
+        width: 50%;
+        margin: 0 auto;
+    }
+</style>
+
+
 @endsection 
 
 @push('script')
