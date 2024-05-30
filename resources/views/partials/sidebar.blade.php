@@ -40,11 +40,27 @@
             @endif
         </ul>
 
-        <form action="{{ route('auth.logout') }}" method="post"
-            onsubmit="return confirm('Apakah anda yakin ingin keluar?')">
+        <form id="logout-form" action="{{ route('auth.logout') }}" method="post">
             @method('DELETE')
             @csrf
-            <button class="w-full mt-4 d-block bg-transparent border-0 fw-bold text-danger px-3">Keluar</button>
+            <button type="button" id="logout-button" class="w-full mt-4 d-block bg-transparent border-0 fw-bold text-danger px-3">Keluar</button>
         </form>
     </div>
 </nav>
+
+<script>
+document.getElementById('logout-button').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Apakah anda yakin ingin keluar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, keluar',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('logout-form').submit();
+        }
+    });
+});
+</script>

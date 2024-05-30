@@ -9,6 +9,9 @@
     feather.replace({ 'aria-hidden': 'true' })
 </script>
 
+{{-- sweetalert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 {{-- Main JS --}}
 <script type="module" src="{{ asset('js/main.js') }}"></script>
 {{-- Livewire JS --}}
