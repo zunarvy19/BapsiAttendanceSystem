@@ -2,8 +2,10 @@
 
 return [
     'buttons' => [
-        'filter'            => 'فیلتر',
-        'clear_all_filters' => 'Clear all',
+        'filter'          => 'فیلتر',
+        'export'          => 'ExportXLS',
+        'export_one'      => 'ExportXLS انتخاب شده',
+        'export_selected' => 'ExportXLS انتخاب شده',
     ],
     'labels' => [
         'action'           => 'اقدام ها',

@@ -1,18 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use function Pest\Livewire\livewire;
-use PowerComponents\LivewirePowerGrid\Tests\Actions\TestDatabase;
 
 beforeEach(
     function () {
-        TestDatabase::seed(dishesForSorting());
+        DB::table('dishes')->truncate();
+        $this->seeders(dishesForSorting());
     }
 );
 
 it('properly sorts ASC/DESC with: date', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->call('sortBy', 'produced_at')
         ->set('sortDirection', 'desc')
         ->assertSeeHtml('Dish J')
@@ -43,7 +44,7 @@ it('properly sorts ASC/DESC with: date', function (string $component, object $pa
 it('properly sorts ASC/DESC with: int', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->call('sortBy', 'id')
         ->set('sortDirection', 'desc')
         ->assertSeeHtml('Dish L')
@@ -60,7 +61,7 @@ it('properly sorts ASC/DESC with: int', function (string $component, object $par
 it('properly sorts ASC/DESC with: string', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->call('sortBy', 'name')
         ->set('sortDirection', 'desc')
         ->assertSeeHtml('Zebra Dish H')
@@ -77,7 +78,7 @@ it('properly sorts ASC/DESC with: string', function (string $component, object $
 it('properly sorts ASC/DESC with: float', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->call('sortBy', 'price')
         ->set('sortDirection', 'desc')
         ->assertSeeHtml('Zebra Dish H')
@@ -94,7 +95,7 @@ it('properly sorts ASC/DESC with: float', function (string $component, object $p
 it('properly sorts ASC/DESC with: boolean', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->call('sortBy', 'in_stock')
         ->set('sortDirection', 'asc')
         ->assertSeeHtml('Dish L')
@@ -107,7 +108,7 @@ it('properly sorts ASC/DESC with: boolean', function (string $component, object 
 it('properly sorts ASC/DESC with: string-number', function (string $component, object $params) {
     livewire($component)
         ->call($params->theme)
-        ->set('setUp.footer.perPage', '10')
+        ->set('perPage', '10')
         ->set('withSortStringNumber', true)
         ->set('ignoreTablePrefix', false)
         ->call('sortBy', 'stored_at')
@@ -151,8 +152,6 @@ function dishesForSorting(): array
             'price'       => 100.00,
             'stored_at'   => '1',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-01',
         ],
@@ -162,8 +161,6 @@ function dishesForSorting(): array
             'price'       => 200.10,
             'stored_at'   => '2',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-02',
         ],
@@ -173,8 +170,6 @@ function dishesForSorting(): array
             'price'       => 300.50,
             'stored_at'   => '3',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-03',
         ],
@@ -184,8 +179,6 @@ function dishesForSorting(): array
             'price'       => 400.00,
             'stored_at'   => '4',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-04',
         ],
@@ -195,8 +188,6 @@ function dishesForSorting(): array
             'price'       => 500.00,
             'stored_at'   => '5',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-05',
         ],
@@ -206,8 +197,6 @@ function dishesForSorting(): array
             'price'       => 600.00,
             'stored_at'   => '6',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-06',
         ],
@@ -217,8 +206,6 @@ function dishesForSorting(): array
             'price'       => 700.00,
             'stored_at'   => '7',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-07',
         ],
@@ -228,8 +215,6 @@ function dishesForSorting(): array
             'price'       => 7500.00,
             'stored_at'   => '8',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-08',
         ],
@@ -239,8 +224,6 @@ function dishesForSorting(): array
             'price'       => 800.00,
             'stored_at'   => '9',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-09',
         ],
@@ -250,8 +233,6 @@ function dishesForSorting(): array
             'price'       => 900.00,
             'stored_at'   => '10',
             'calories'    => 224,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'in_stock'    => true,
             'produced_at' => '2021-10-10',
         ],
@@ -262,8 +243,6 @@ function dishesForSorting(): array
             'stored_at'   => '1b',
             'calories'    => 224,
             'in_stock'    => false,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'produced_at' => '2021-02-01',
         ],
         [
@@ -273,8 +252,6 @@ function dishesForSorting(): array
             'stored_at'   => '1a',
             'calories'    => 224,
             'in_stock'    => false,
-            'serving_at'  => 'pool bar',
-            'diet'        => 1,
             'produced_at' => '2021-01-01',
         ],
     ];

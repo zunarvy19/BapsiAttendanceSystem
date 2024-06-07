@@ -2,13 +2,12 @@
 
 namespace PowerComponents\LivewirePowerGrid\Providers;
 
-use Illuminate\Support\{Facades\Blade, Facades\View, ServiceProvider, Str};
-use PowerComponents\LivewirePowerGrid\Commands\{CreateCommand, DemoCommand, PublishCommand, UpdateCommand};
+use Illuminate\Support\Facades\{Blade, View};
+use Illuminate\Support\ServiceProvider;
+use PowerComponents\LivewirePowerGrid\Commands\{CreateCommand, DemoCommand, PublishCommand};
 use PowerComponents\LivewirePowerGrid\PowerGridManager;
-use PowerComponents\LivewirePowerGrid\Rules\RuleManager;
 use PowerComponents\LivewirePowerGrid\Themes\ThemeManager;
 
-/** @codeCoverageIgnore */
 class PowerGridServiceProvider extends ServiceProvider
 {
     private string $packageName = 'livewire-powergrid';
@@ -16,10 +15,9 @@ class PowerGridServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([PublishCommand::class]);
-            $this->commands([UpdateCommand::class]);
-            $this->commands([DemoCommand::class]);
             $this->commands([CreateCommand::class]);
+            $this->commands([PublishCommand::class]);
+            $this->commands([DemoCommand::class]);
         }
 
         $this->publishViews();
@@ -49,7 +47,6 @@ class PowerGridServiceProvider extends ServiceProvider
 
         $this->app->alias(PowerGridManager::class, 'powergrid');
         $this->app->alias(ThemeManager::class, 'theme');
-        $this->app->alias(RuleManager::class, 'rule');
     }
 
     private function publishViews(): void
@@ -67,7 +64,9 @@ class PowerGridServiceProvider extends ServiceProvider
             __DIR__ . '/../../resources/config/livewire-powergrid.php' => config_path($this->packageName . '.php'),
         ], 'livewire-powergrid-config');
 
-        $this->publishes([__DIR__ . '/../../resources/lang' => lang_path('vendor/' . $this->packageName)], $this->packageName . '-lang');
+        $this->publishes([
+            __DIR__ . '/../../resources/lang' => resource_path('lang/vendor/' . $this->packageName),
+        ], $this->packageName . '-lang');
     }
 
     private function createDirectives(): void
@@ -78,20 +77,6 @@ class PowerGridServiceProvider extends ServiceProvider
 
         Blade::directive('powerGridScripts', function () {
             return "<?php echo view('livewire-powergrid::assets.scripts')->render(); ?>";
-        });
-
-        Blade::directive('entangleWhen', function ($expression) {
-            $expression  = Blade::stripParentheses($expression);
-
-            $expression  = Str::of($expression)->explode(',');
-            /** @var bool $conditional */
-            $conditional = $expression->get(0);
-            $default     = trim(strval($expression->get(2)));
-            $expression  = trim(strval($expression->get(1)));
-
-            return <<<EOT
-<?php if (!$conditional) { ?>$default<?php } if ((object) ({$expression}) instanceof \Livewire\WireDirective && $conditional) : ?>window.Livewire.find('{{ \$_instance->id }}').entangle('{{ {$expression}->value() }}'){{ {$expression}->hasModifier('defer') ? '.defer' : '' }}<?php elseif($conditional) : ?>window.Livewire.find('{{ \$_instance->id }}').entangle('{{ {$expression} }}')<?php endif; ?>
-EOT;
         });
 
         View::composer('livewire-powergrid::assets.styles', function ($view) {

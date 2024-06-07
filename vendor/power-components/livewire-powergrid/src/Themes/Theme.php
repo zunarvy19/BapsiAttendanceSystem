@@ -16,6 +16,7 @@ use PowerComponents\LivewirePowerGrid\Themes\Components\{Actions,
     FilterSelect,
     Footer,
     Layout,
+    Row,
     Table,
     Toggleable};
 
@@ -25,6 +26,7 @@ use PowerComponents\LivewirePowerGrid\Themes\Components\{Actions,
  * @method static Toggleable toggleable()
  * @method static Layout layout()
  * @method static Cols cols()
+ * @method static Row row()
  * @method static Actions actions()
  * @method static Checkbox checkbox()
  * @method static Editable editable()

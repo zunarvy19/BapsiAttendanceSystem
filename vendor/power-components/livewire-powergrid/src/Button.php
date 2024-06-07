@@ -4,6 +4,8 @@ namespace PowerComponents\LivewirePowerGrid;
 
 final class Button
 {
+    public string $action = '';
+
     public string $caption = '';
 
     public string $route = '';
@@ -20,17 +22,9 @@ final class Button
 
     public string $target = '_blank';
 
-    public string $to = '';
-
-    public string $tooltip = '';
-
-    public bool $toggleDetail = false;
-
-    public bool $singleParam = false;
-
     /**
      *
-     * @var array<int|string, string> $param
+     * @var array<int, string> $param
      */
     public array $param = [];
 
@@ -38,22 +32,18 @@ final class Button
      * Button constructor.
      * @param string $action
      */
-    public function __construct(public string $action)
+    public function __construct(string $action)
     {
-    }
-
-    public static function add(string $action = ''): Button
-    {
-        return new Button($action);
+        $this->action = $action;
     }
 
     /**
-     * Make a new Column
+     * @param string $action
+     * @return Button
      */
-    public static function make(string $action, string $caption): self
+    public static function add(string $action = ''): Button
     {
-        return (new static($action))
-            ->caption($caption);
+        return new Button($action);
     }
 
     /**
@@ -67,23 +57,25 @@ final class Button
     }
 
     /**
-     * Route string
+     * @param string $route
+     * @param array<int, string> $param
+     * @return $this
      */
-    public function route(string $route, array $param, bool $singleParam = false): Button
+    public function route(string $route, array $param): Button
     {
-        $this->route       = $route;
-        $this->param       = $param;
-        $this->singleParam = $singleParam;
+        $this->route = $route;
+        $this->param = $param;
 
         return $this;
     }
 
     /**
-     * Class string in view: class="foo"
+     * Class string in view: class="bla bla bla"
+     * @return $this
      */
-    public function class(string $classAttr): Button
+    public function class(string $class_attr): Button
     {
-        $this->class = $classAttr;
+        $this->class = $class_attr;
 
         return $this;
     }
@@ -103,17 +95,15 @@ final class Button
      * openModal
      * @param string $component modal component
      * @param array<int, string> $param modal parameters
-     * @param boolean $singleParam parameter is single parameter
      * @return $this
      */
-    public function openModal(string $component, array $param, bool $singleParam = false): Button
+    public function openModal(string $component, array $param): Button
     {
-        $this->view        = $component;
-        $this->param       = $param;
-        $this->singleParam = $singleParam;
-        $this->method      = 'get';
-        $this->route       = '';
-        $this->event       = '';
+        $this->view   = $component;
+        $this->param  = $param;
+        $this->method = 'get';
+        $this->route  = '';
+        $this->event  = '';
 
         return $this;
     }
@@ -122,34 +112,13 @@ final class Button
      * emit
      * @param string $event event name
      * @param array<int, string> $param parameters
-     * @param boolean $singleParam parameter is single parameter
      * @return $this
      */
-    public function emit(string $event, array $param, bool $singleParam = false): Button
+    public function emit(string $event, array $param): Button
     {
-        $this->event       = $event;
-        $this->param       = $param;
-        $this->singleParam = $singleParam;
-        $this->route       = '';
-
-        return $this;
-    }
-
-    /**
-     * emitTo
-     * @param string $to component
-     * @param string $event event name
-     * @param array<int, string> $param parameters
-     * @param boolean $singleParam parameter is single parameter
-     * @return $this
-     */
-    public function emitTo(string $to, string $event, array $param, bool $singleParam = false): Button
-    {
-        $this->to          = $to;
-        $this->event       = $event;
-        $this->param       = $param;
-        $this->singleParam = $singleParam;
-        $this->route       = '';
+        $this->event   = $event;
+        $this->param   = $param;
+        $this->route   = '';
 
         return $this;
     }
@@ -174,29 +143,6 @@ final class Button
     public function target(string $target): Button
     {
         $this->target = $target;
-
-        return $this;
-    }
-
-    /**
-     * tooltip
-     * @param string $tooltip
-     * @return $this
-     */
-    public function tooltip(string $tooltip): Button
-    {
-        $this->tooltip = $tooltip;
-
-        return $this;
-    }
-
-    /**
-     * tooltip
-     * @return $this
-     */
-    public function toggleDetail(): Button
-    {
-        $this->toggleDetail = true;
 
         return $this;
     }

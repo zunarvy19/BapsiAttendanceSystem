@@ -1,27 +1,33 @@
-<div>
-    @includeIf(data_get($setUp, 'header.includeViewOnTop'))
-    <div class="md:flex md:flex-row w-full justify-between items-center">
-        <div class="md:flex md:flex-row w-full">
-            <div>
-                @include(powerGridThemeRoot().'.header.actions')
-            </div>
-            <div class="flex flex-row justify-center items-center text-sm">
-                @if(data_get($setUp, 'exportable'))
-                    <div class="mr-2 mt-2 sm:mt-0">
-                        @include(powerGridThemeRoot().'.header.export')
-                    </div>
-                @endif
-                @includeIf(powerGridThemeRoot().'.header.toggle-columns')
-            </div>
-            @include(powerGridThemeRoot().'.header.loading')
+<div class="md:flex md:flex-row w-full justify-between">
+
+    <div class="md:flex md:flex-row w-full">
+
+        <div>
+            <x-livewire-powergrid::actions-header
+                :theme="$theme"
+                :actions="$this->headers"/>
         </div>
-        @include(powerGridThemeRoot().'.header.search')
+
+        <div class="flex flex-row">
+            @if($exportActive)
+                <div class="mr-2 mt-2 sm:mt-0">
+                    @include(powerGridThemeRoot().'.export')
+                </div>
+            @endif
+
+            @includeIf(powerGridThemeRoot().'.toggle-columns')
+
+        </div>
+
+        @includeIf(!$batchExporting, powerGridThemeRoot().'.loading')
+
     </div>
 
-    @include(powerGridThemeRoot().'.header.batch-exporting')
-    @include(powerGridThemeRoot().'.header.enabled-filters')
+    @include(powerGridThemeRoot().'.search')
 
-    @includeIf(data_get($setUp, 'header.includeViewOnBottom'))
 </div>
 
+@include(powerGridThemeRoot().'.batch-exporting')
+
+@include(powerGridThemeRoot().'.enabled-filters')
 

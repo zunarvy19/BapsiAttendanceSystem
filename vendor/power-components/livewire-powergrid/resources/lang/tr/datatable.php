@@ -2,8 +2,7 @@
 
 return [
     'buttons' => [
-        'filter'            => 'Filtre',
-        'clear_all_filters' => 'Clear all',
+        'filter' => 'Filtre',
     ],
     'labels' => [
         'action'           => 'İşlemler',
@@ -42,16 +41,11 @@ return [
         'contains_not' => 'İçermeyen',
         'starts_with'  => 'Başlayan',
         'ends_with'    => 'Biten',
-        'is_null'      => 'Yok olan',
-        'is_not_null'  => 'Yok olmayan',
-        'is_blank'     => 'Boş olan',
-        'is_not_blank' => 'Boş olmayan',
-        'is_empty'     => 'Boş olan',
-        'is_not_empty' => 'Boş olmayan',
-
-    ],
-    'export' => [
-        'exporting' => 'Lütfen bekleyin!',
-        'completed' => 'Dışa aktarım tamamlandı! Dosyalarınız indirmek için hazır',
+        'is_null'      => 'is_null',
+        'is_not_null'  => 'is_not_null',
+        'is_blank'     => 'is_blank',
+        'is_not_blank' => 'is_not_blank',
+        'is_empty'     => 'is_empty',
+        'is_not_empty' => 'is_not_empty',
     ],
 ];

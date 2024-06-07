@@ -10,8 +10,13 @@ if (!function_exists('powerGridThemeRoot')) {
      */
     function powerGridThemeRoot(): string
     {
+        $configTheme = config('livewire-powergrid.theme');
+
+        if (!is_string($configTheme)) {
+            throw new \Exception('Theme not found!');
+        }
         /** @var ThemeBase $theme */
-        $theme = PowerGrid::theme(strval(config('livewire-powergrid.theme')));
+        $theme = PowerGrid::theme($configTheme);
 
         return $theme->root();
     }
@@ -23,15 +28,21 @@ if (!function_exists('powerGridTheme')) {
      */
     function powerGridTheme(): string
     {
-        return strval(config('livewire-powergrid.theme'));
+        $powerGridTheme = config('livewire-powergrid.theme');
+
+        if (!is_string($powerGridTheme)) {
+            throw new \Exception('PowerGrid theme not found!');
+        }
+
+        return $powerGridTheme;
     }
 }
 
 if (!function_exists('validateInputTextOptions')) {
     function validateInputTextOptions(array $filter, string $field): bool
     {
-        return data_get($filter, "input_text_options.$field") !== null && in_array(
-            strtolower(strval(data_get($filter, "input_text_options.$field"))),
+        return isset($filter['input_text_options'][$field]) && in_array(
+            strtolower($filter['input_text_options'][$field]),
             Filter::getInputTextOptions()
         );
     }

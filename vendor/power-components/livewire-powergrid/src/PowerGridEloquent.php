@@ -14,7 +14,15 @@ final class PowerGridEloquent
 
     public function __construct()
     {
-        $this->collection = collect([]);
+        $this->collection = collect();
+    }
+
+    /**
+     * @return static
+     */
+    public static function eloquent(): PowerGridEloquent
+    {
+        return new PowerGridEloquent();
     }
 
     /**
@@ -24,7 +32,7 @@ final class PowerGridEloquent
      */
     public function addColumn(string $field, Closure $closure = null): PowerGridEloquent
     {
-        $this->columns[$field] = $closure ?? fn ($model) => e(strval(data_get($model, $field)));
+        $this->columns[$field] = $closure ?? fn ($model) => e($model->{$field});
 
         return $this;
     }
@@ -38,7 +46,6 @@ final class PowerGridEloquent
             return null;
         }
 
-        /** @phpstan-ignore-next-line */
         return $this->collection->map(function (Model $model) {
             // We need to generate a set of columns, which are already registered in the object, based on the model.
             // To do this we iterate through each column and then resolve the closure.

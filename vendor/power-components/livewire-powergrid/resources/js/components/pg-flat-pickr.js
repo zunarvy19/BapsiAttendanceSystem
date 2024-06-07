@@ -8,13 +8,6 @@ export default (params) => ({
     noWeekEnds: params.noWeekEnds ?? false,
     customConfig: params.customConfig ?? null,
     init() {
-
-        const lang = this.locale.locale;
-
-        if (typeof lang !== 'undefined') {
-            this.locale.locale = require("flatpickr/dist/l10n/"+lang+".js").default[lang];
-        }
-
         const _this = this;
         const options = {
             mode: 'range',
@@ -41,9 +34,7 @@ export default (params) => ({
                     selectedDates: selectedDates,
                     field: _this.dataField,
                     values: _this.filterKey,
-                    label: _this.label,
-                    dateStr: dateStr,
-                    enableTime: options.enableTime === undefined ? false : options.enableTime
+                    label: _this.label
                 });
             }
         }

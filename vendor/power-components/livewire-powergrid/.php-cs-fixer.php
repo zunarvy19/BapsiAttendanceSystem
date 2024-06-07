@@ -3,7 +3,7 @@
 use PhpCsFixer\{Config, Finder};
 
 $rules = [
-    '@PSR12'                      => true,
+    '@PSR2'                       => true,
     'group_import'                => true,
     'align_multiline_comment'     => false,
     'single_import_per_statement' => false,
@@ -75,7 +75,6 @@ $finder = Finder::create()
     ->notPath('bootstrap')
     ->notPath('storage')
     ->notPath('vendor')
-    ->notPath('tests/Enums/Diet.php')
     ->in(getcwd())
     ->name('*.php')
     ->notName('*.blade.php')

@@ -6,12 +6,12 @@
     'theme' => null,
     'currentTable' => null,
     'tableName' => null,
-    'showErrorBag' => null,
 ])
-<div x-cloak
+<div wire:ignore.self
+     x-cloak
      x-data="pgEditable({
        tableName: '{{ $tableName }}',
-       id: '{{ $row->{$primaryKey} }}',
+       id: '{{ $row->{$primaryKey} ?? $row->id }}',
        dataField: '{{ $field }}',
        content: '{{ $helperClass->resolveContent($currentTable, $field, $row) }}'
      })">
@@ -21,13 +21,13 @@
          x-on:click="editable = true"
     ></div>
     <div x-show="editable">
-        {{ $input }}
+        <input
+            type="text"
+            x-on:keydown.enter="save()"
+            :class="{'cursor-pointer': !editable}"
+            class="{{ $theme->inputClass }} p-2"
+            x-ref="editable"
+            x-text="content"
+            :value="$root.firstElementChild.innerText">
     </div>
-    @if($showErrorBag)
-        @error($field.".".$row->{$primaryKey})
-        <div class="text-sm text-red-800 p-1 transition transition-all duration-200">
-            {{ str($message)->replace($field.".".$row->{$primaryKey}, $field) }}
-        </div>
-        @enderror
-    @endif
 </div>

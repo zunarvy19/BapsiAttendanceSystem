@@ -2,30 +2,22 @@
 
 namespace PowerComponents\LivewirePowerGrid\Services\Spout;
 
-use OpenSpout\Common\Entity\Row;
-use OpenSpout\Common\Entity\Style\{Color, Style};
-use OpenSpout\Common\Exception\IOException;
-use OpenSpout\Writer\Exception\WriterNotOpenedException;
-use OpenSpout\Writer\XLSX\{Options, Writer};
-use PowerComponents\LivewirePowerGrid\Exportable;
+use Box\Spout\Common\Entity\Style\{CellAlignment, Color};
+use Box\Spout\Common\Exception\{IOException, InvalidArgumentException};
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use PowerComponents\LivewirePowerGrid\Services\Contracts\ExportInterface;
-use PowerComponents\LivewirePowerGrid\Services\{Export};
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use PowerComponents\LivewirePowerGrid\Services\Export;
+use Symfony\Component\HttpFoundation\{BinaryFileResponse};
 
 class ExportToXLS extends Export implements ExportInterface
 {
     /**
-     * @throws \Exception
+     * @throws IOException | WriterNotOpenedException | InvalidArgumentException
      */
-    public function download(Exportable|array $exportOptions): BinaryFileResponse
+    public function download(bool $deleteFileAfterSend): BinaryFileResponse
     {
-        $deleteFileAfterSend = boolval(data_get($exportOptions, 'deleteFileAfterSend'));
-        $this->striped       = strval(data_get($exportOptions, 'striped'));
-
-        /** @var array $columnWidth */
-        $columnWidth         = data_get($exportOptions, 'columnWidth', []);
-        $this->columnWidth   = $columnWidth;
-
         $this->build();
 
         return response()
@@ -34,57 +26,40 @@ class ExportToXLS extends Export implements ExportInterface
     }
 
     /**
-     * @throws WriterNotOpenedException
-     * @throws IOException
+     * @throws IOException | WriterNotOpenedException | InvalidArgumentException
+     */
+    public function store(): void
+    {
+        $this->build();
+    }
+
+    /**
+     * @throws IOException | WriterNotOpenedException | InvalidArgumentException
+     * @throws \Exception
      */
     public function build(): void
     {
         $data = $this->prepare($this->data, $this->columns);
 
-        $options = new Options();
-        $writer  = new Writer($options);
-
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile(storage_path($this->fileName . '.xlsx'));
 
-        $style = (new Style())
+        $style = (new StyleBuilder())
             ->setFontBold()
-            ->setFontName('Arial')
-            ->setFontSize(12)
             ->setFontColor(Color::BLACK)
             ->setShouldWrapText(false)
-            ->setBackgroundColor('d0d3d8');
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor('d0d3d8')
+            ->build();
 
-        $row = Row::fromValues($data['headers'], $style);
+        $row = WriterEntityFactory::createRowFromArray($data['headers'], $style);
 
         $writer->addRow($row);
 
-        /**
-         * @var int<1, max> $column
-         * @var float $width
-         */
-        foreach ($this->columnWidth as $column => $width) {
-            $options->setColumnWidth($width, $column);
-        }
-
-        $default = (new Style())
-            ->setFontName('Arial')
-            ->setFontSize(12);
-
-        $gray = (new Style())
-            ->setFontName('Arial')
-            ->setFontSize(12)
-            ->setBackgroundColor($this->striped);
-
         /** @var array<string> $row */
-        foreach ($data['rows'] as $key => $row) {
-            if (count($row)) {
-                if ($key % 2 && $this->striped) {
-                    $row = Row::fromValues($row, $gray);
-                } else {
-                    $row = Row::fromValues($row, $default);
-                }
-                $writer->addRow($row);
-            }
+        foreach ($data['rows'] as $row) {
+            $row = WriterEntityFactory::createRowFromArray($row);
+            $writer->addRow($row);
         }
 
         $writer->close();

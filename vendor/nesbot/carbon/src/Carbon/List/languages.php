@@ -619,7 +619,7 @@ return [
     ],
     'ss' => [
         'isoName' => 'Swati',
-        'nativeName' => 'Asistenti',
+        'nativeName' => 'SiSwati',
     ],
     'sv' => [
         'isoName' => 'Swedish',

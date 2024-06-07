@@ -2,25 +2,31 @@
 
 namespace PowerComponents\LivewirePowerGrid\Traits;
 
-use Exception;
 use Illuminate\Bus\Batch;
-use Illuminate\Database\Eloquent as Eloquent;
-use Illuminate\Support as Support;
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\{Collection as BaseCollection, Str};
 use PowerComponents\LivewirePowerGrid\Services\Spout\{ExportToCsv, ExportToXLS};
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Throwable;
 
 /**
  * @property ?Batch $exportBatch
  */
 trait Exportable
 {
+    public bool $exportActive = false;
+
     public array $exportOptions = [];
 
+    public string $exportFileName = 'download';
+
+    public array $exportType = [];
+
     /**
-     * @throws Exception
+     * @throws \Exception
+     * @return Collection|BaseCollection
      */
-    public function prepareToExport(bool $selected = false): Eloquent\Collection|Support\Collection
+    public function prepareToExport(bool $selected = false)
     {
         $inClause = $this->filtered;
 
@@ -42,7 +48,11 @@ trait Exportable
         /** @phpstan-ignore-next-line */
         $currentTable = $model->getModel()->getTable();
 
-        $sortField = Support\Str::of($this->sortField)->contains('.') ? $this->sortField : $currentTable . '.' . $this->sortField;
+        if (Str::of($this->sortField)->contains('.')) {
+            $sortField = $this->sortField;
+        } else {
+            $sortField = $currentTable . '.' . $this->sortField;
+        }
 
         $results = $this->resolveModel()
             ->when($inClause, function ($query, $inClause) {
@@ -55,25 +65,28 @@ trait Exportable
     }
 
     /**
-     * @throws Throwable
+     * @throws \Exception | \Throwable
+     * @return BinaryFileResponse | bool
      */
-    public function exportToXLS(bool $selected = false): BinaryFileResponse|bool
+    public function exportToXLS(bool $selected = false)
     {
         return $this->export(ExportToXLS::class, $selected);
     }
 
     /**
-     * @throws Throwable
+     * @throws \Exception | \Throwable
+     * @return BinaryFileResponse | bool
      */
-    public function exportToCsv(bool $selected = false): BinaryFileResponse|bool
+    public function exportToCsv(bool $selected = false)
     {
         return $this->export(ExportToCsv::class, $selected);
     }
 
     /**
-     * @throws Exception | Throwable
+     * @throws \Exception | \Throwable
+     * @return BinaryFileResponse | bool
      */
-    private function export(string $exportableClass, bool $selected): BinaryFileResponse|bool
+    private function export(string $exportableClass, bool $selected)
     {
         if ($this->queues > 0 && !$selected) {
             return $this->runOnQueue($exportableClass);
@@ -87,20 +100,10 @@ trait Exportable
          */
         $exportable = new $exportableClass();
 
-        $currentHiddenStates = collect($this->columns)
-            ->mapWithKeys(fn ($column) => [data_get($column, 'field') => data_get($column, 'hidden')]);
-        $columnsWithHiddenState = array_map(function ($column) use ($currentHiddenStates) {
-            $column->hidden = $currentHiddenStates[$column->field];
-
-            return $column;
-        }, $this->columns());
-
-        /** @var string $fileName */
-        $fileName = data_get($this->setUp, 'exportable.fileName');
         $exportable
-            ->fileName($fileName)
-            ->setData($columnsWithHiddenState, $this->prepareToExport($selected));
+            ->fileName($this->exportFileName)
+            ->setData($this->columns(), $this->prepareToExport($selected));
 
-        return $exportable->download($this->setUp['exportable']);
+        return $exportable->download($this->exportOptions['deleteAfterDownload']);
     }
 }

@@ -8,7 +8,6 @@ use Composer\Repository\InstalledRepositoryInterface;
 use Exception;
 use Illuminate\Support\Carbon;
 
-/** @codeCoverageIgnore */
 class InteractsWithVersions
 {
     /**
@@ -70,7 +69,6 @@ class InteractsWithVersions
             /** @var array $package */
             $package = json_decode($json, true);
 
-            /** @phpstan-ignore-next-line */
             $version = collect($package['packages']['power-components/livewire-powergrid'])
                     ->first()['version'];
 

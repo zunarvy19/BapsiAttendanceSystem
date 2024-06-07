@@ -11,6 +11,8 @@ use PowerComponents\LivewirePowerGrid\Services\Contracts\ModelFilterInterface;
 
 class Model implements ModelFilterInterface
 {
+    private Builder $query;
+
     private array $columns;
 
     private string $search;
@@ -19,13 +21,15 @@ class Model implements ModelFilterInterface
 
     private array $filters;
 
-    private array $inputRangeConfig;
-
-    public function __construct(private Builder $query)
+    public function __construct(Builder $query)
     {
+        $this->query = $query;
     }
 
-    public static function query(Builder $query): Model
+    /**
+     * @param Builder $query
+     */
+    public static function query($query): Model
     {
         return new Model($query);
     }
@@ -33,13 +37,6 @@ class Model implements ModelFilterInterface
     public function setColumns(array $columns): Model
     {
         $this->columns = $columns;
-
-        return $this;
-    }
-
-    public function setInputRangeConfig(array $config): Model
-    {
-        $this->inputRangeConfig = $config;
 
         return $this;
     }
@@ -110,11 +107,17 @@ class Model implements ModelFilterInterface
         }
     }
 
-    public function filterMultiSelect(Builder $query, string $field, array $values): void
+    /**
+     * @param string|array $value
+     */
+    public function filterMultiSelect(Builder $query, string $field, $value): void
     {
         $empty = false;
 
-        if (count($values) === 0) {
+        /** @var array $values */
+        $values = collect($value)->get('values');
+
+        if (is_array($values) && count($values) === 0) {
             return;
         }
 
@@ -128,20 +131,26 @@ class Model implements ModelFilterInterface
         }
     }
 
-    public function filterSelect(Builder $query, string $field, string|array $values): void
+    /**
+     * @param string|array $value
+     */
+    public function filterSelect(Builder $query, string $field, $value): void
     {
-        if (is_array($values)) {
-            $field  = $field . '.' . key($values);
-            $values = $values[key($values)];
+        if (is_array($value)) {
+            $field = $field . '.' . key($value);
+            $value = $value[key($value)];
         }
 
         /** @var Builder $query */
-        if (filled($values)) {
-            $query->where($field, $values);
+        if (filled($value)) {
+            $query->where($field, $value);
         }
     }
 
-    public function filterBoolean(Builder $query, string $field, string|array $value): void
+    /**
+     * @param string|array $value
+     */
+    public function filterBoolean(Builder $query, string $field, $value): void
     {
         if (is_array($value)) {
             $field = $field . '.' . key($value);
@@ -150,20 +159,22 @@ class Model implements ModelFilterInterface
 
         /** @var Builder $query */
         if ($value != 'all') {
-            $value = ($value == 'true' || $value == '1');
+            $value = ($value == 'true');
             $query->where($field, '=', $value);
         }
     }
 
-    public function filterInputText(Builder $query, string $field, string|array|null $value): void
+    /**
+     * @param string|array $value
+     */
+    public function filterInputText(Builder $query, string $field, $value): void
     {
         if (is_array($value)) {
             $field = $field . '.' . key($value);
             $value = $value[key($value)];
         }
 
-        $textFieldOperator = (validateInputTextOptions($this->filters, $field) ? strtolower(strval(data_get($this->filters, "input_text_options.$field"))) : 'contains');
-
+        $textFieldOperator = (validateInputTextOptions($this->filters, $field) ? strtolower($this->filters['input_text_options'][$field]) : 'contains');
         switch ($textFieldOperator) {
             case 'is':
                 $query->where($field, '=', $value);
@@ -222,34 +233,23 @@ class Model implements ModelFilterInterface
     public function filterNumber(Builder $query, string $field, array $value): void
     {
         if (isset($value['start']) && !isset($value['end'])) {
-            $start = $value['start'];
-            if (isset($this->inputRangeConfig[$field])) {
-                $start = str_replace($this->inputRangeConfig[$field]['thousands'], '', $value['start']);
-                $start = (float) str_replace($this->inputRangeConfig[$field]['decimal'], '.', $start);
-            }
+            $start = str_replace($value['thousands'], '', $value['start']);
+            $start = (float) str_replace($value['decimal'], '.', $start);
 
             $query->where($field, '>=', $start);
         }
         if (!isset($value['start']) && isset($value['end'])) {
-            $end = $value['end'];
-            if (isset($this->inputRangeConfig[$field])) {
-                $end = str_replace($this->inputRangeConfig[$field]['thousands'], '', $value['end']);
-                $end = (float) str_replace($this->inputRangeConfig[$field]['decimal'], '.', $end);
-            }
+            $end = str_replace($value['thousands'], '', $value['end']);
+            $end = (float) str_replace($value['decimal'], '.', $end);
 
             $query->where($field, '<=', $end);
         }
         if (isset($value['start']) && isset($value['end'])) {
-            $start = $value['start'];
-            $end   = $value['end'];
+            $start = str_replace($value['thousands'], '', $value['start']);
+            $start = str_replace($value['decimal'], '.', $start);
 
-            if (isset($this->inputRangeConfig[$field])) {
-                $start = str_replace($this->inputRangeConfig[$field]['thousands'], '', $value['start']);
-                $start = str_replace($this->inputRangeConfig[$field]['decimal'], '.', $start);
-
-                $end = str_replace($this->inputRangeConfig[$field]['thousands'], '', $value['end']);
-                $end = str_replace($this->inputRangeConfig[$field]['decimal'], '.', $end);
-            }
+            $end = str_replace($value['thousands'], '', $value['end']);
+            $end = str_replace($value['decimal'], '.', $end);
 
             $query->whereBetween($field, [$start, $end]);
         }
@@ -263,26 +263,22 @@ class Model implements ModelFilterInterface
 
                 /** @var Column $column */
                 foreach ($this->columns as $column) {
-                    $searchable = strval(data_get($column, 'searchable'));
-                    $field      = strval(data_get($column, 'dataField')) ?: strval(data_get($column, 'field'));
+                    /** @var string $searchable */
+                    $searchable = data_get($column, 'searchable');
+                    /** @var string $field */
+                    $field      = data_get($column, 'dataField') ?: data_get($column, 'field');
 
                     if ($searchable && $field) {
                         if (str_contains($field, '.')) {
                             $explodeField = Str::of($field)->explode('.');
-                            /** @var string $table */
-                            $table        = $explodeField->get(0);
-                            /** @var string $field */
-                            $field        = $explodeField->get(1);
+                            $table = $explodeField->get(0);
+                            $field = $explodeField->get(1);
                         }
 
                         $hasColumn = Schema::hasColumn($table, $field);
 
                         if ($hasColumn) {
                             $query->orWhere($table . '.' . $field, SqlSupport::like(), '%' . $this->search . '%');
-                        }
-
-                        if ($sqlRaw = strval(data_get($column, 'searchableRaw'))) {
-                            $query->orWhereRaw($sqlRaw . ' ' . SqlSupport::like() . ' \'%' . $this->search . '%\'');
                         }
                     }
                 }

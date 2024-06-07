@@ -2,20 +2,15 @@
 
 namespace PowerComponents\LivewirePowerGrid\Services;
 
-use Illuminate\Database\Eloquent\Model;
+use Exception;
 use Illuminate\Support\Collection;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Helpers\Helpers;
 
 class Export
 {
     public string $fileName;
 
     public Collection $data;
-
-    public string $striped = '';
-
-    public array $columnWidth = [];
 
     /** @var array<Column> $columns */
     public array $columns;
@@ -43,29 +38,20 @@ class Export
     /**
      * @param Collection $data
      * @param array<Column> $columns
-     * @return array{headers: array, rows: array}.
+     * @throws Exception
+     *
+     * @return array<string, array>.
      */
     public function prepare(Collection $data, array $columns): array
     {
-        $header = collect([]);
+        $header = collect();
 
-        $helperClass = resolve(Helpers::class);
+        $data   = $data->map(function ($row) use ($columns, $header) {
+            $item = collect();
 
-        $data   = $data->transform(function ($row) use ($columns, $header, $helperClass) {
-            $item = collect([]);
-
-            collect($columns)->each(function ($column) use ($row, $header, $item, $helperClass) {
-                /** @var Model|\stdClass $row */
-                $rules            = $helperClass->makeActionRules('pg:checkbox', $row);
-                $isExportable     = false;
-
-                if (isset($rules['hide']) || isset($rules['disable'])) {
-                    $isExportable   = true;
-                }
-
+            collect($columns)->each(function ($column) use ($row, $header, $item) {
                 /** @var Column $column */
-                if ($column->visibleInExport || (!$column->hidden && is_null($column->visibleInExport)) && !$isExportable) {
-                    /** @var array $row */
+                if (!$column->hidden && $column->visibleInExport) {
                     foreach ($row as $key => $value) {
                         if ($key === $column->field) {
                             $item->put($column->title, $value);

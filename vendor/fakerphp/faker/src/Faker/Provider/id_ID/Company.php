@@ -14,7 +14,7 @@ class Company extends \Faker\Provider\Company
     /**
      * @see http://id.wikipedia.org/wiki/Jenis_badan_usaha
      */
-    protected static $companyPrefix = ['PT', 'CV', 'UD', 'PD', 'Perum'];
+    protected static $companyPrefix = ['PT', 'Fa', 'CV', 'UD', 'PJ', 'PD', 'Perum', 'Yayasan'];
 
     /**
      * @see https://www.amesbostonhotel.com/macam-macam-profesi-pekerjaan/
@@ -26,7 +26,7 @@ class Company extends \Faker\Provider\Company
         'Guru', 'Hakim', 'Imam Masjid', 'Industri', 'Jaksa', 'Juru Masak', 'Karyawan BUMD', 'Karyawan BUMN',
         'Karyawan Honorer', 'Karyawan Swasta', 'Kepala Desa', 'Kepolisian RI (POLRI)', 'Kondektur', 'Konstruksi',
         'Konsultan', 'Masinis', 'Mekanik', 'Mengurus Rumah Tangga', 'Montir', 'Nahkoda', 'Nelayan / Perikanan',
-        'Notaris', 'Paraji', 'Pastor', 'Pedagang', 'Pegawai Negeri Sipil (PNS)', 'Pelajar / MahaAsisten', 'Pelaut',
+        'Notaris', 'Paraji', 'Pastor', 'Pedagang', 'Pegawai Negeri Sipil (PNS)', 'Pelajar / Mahasiswa', 'Pelaut',
         'Pemandu Wisata', 'Pembantu Rumah Tangga', 'Penambang', 'Penata Busana', 'Penata Rambut', 'Penata Rias',
         'Pendeta', 'Peneliti', 'Penerjemah', 'Pengacara', 'Pensiunan', 'Penulis', 'Penyelam', 'Penyiar Radio',
         'Penyiar Televisi', 'Perancang Busana', 'Perangkat Desa', 'Perawat', 'Perdagangan', 'Petani / Pekebun',

@@ -26,11 +26,6 @@ class Dish extends Model
 
     protected $table = 'dishes';
 
-    public static function servedAt()
-    {
-        return  self::select('serving_at')->distinct('serving_at')->get();
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');

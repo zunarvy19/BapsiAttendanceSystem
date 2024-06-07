@@ -84,11 +84,10 @@ class SqlSupport
         }
 
         $syntax = collect($supportedVersions[$driverName])
-            ->filter(function ($syntax, $version) use ($driverVersion) {
-                /** @var string $version */
-                return version_compare($version, $driverVersion, '<=');
-            })
-            ->last();
+                ->filter(function ($syntax, $version) use ($driverVersion) {
+                    return version_compare($version, $driverVersion, '<=');
+                })
+                ->last();
 
         return is_null($syntax) === true ? $default : $syntax;
     }
@@ -108,7 +107,7 @@ class SqlSupport
 
     /**
      * @param string $sortField
-     * @return string|null
+     * @return string
      * @throws Exception
      */
     public static function getSortFieldType(string $sortField): ?string

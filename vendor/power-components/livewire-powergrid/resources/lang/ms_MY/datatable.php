@@ -2,8 +2,7 @@
 
 return [
     'buttons' => [
-        'filter'            => 'Carian',
-        'clear_all_filters' => 'Clear all',
+        'filter' => 'Carian',
     ],
     'labels' => [
         'action'           => 'Action',

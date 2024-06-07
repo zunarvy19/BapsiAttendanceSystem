@@ -4,14 +4,13 @@ namespace PowerComponents\LivewirePowerGrid\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\{HtmlString};
 use NumberFormatter;
 use PowerComponents\LivewirePowerGrid\Tests\Models\{Category, Dish};
 use PowerComponents\LivewirePowerGrid\Traits\ActionButton;
 use PowerComponents\LivewirePowerGrid\{Button,
     Column,
-    Exportable,
-    Footer,
-    Header,
     PowerGrid,
     PowerGridComponent,
     PowerGridEloquent};
@@ -19,8 +18,6 @@ use PowerComponents\LivewirePowerGrid\{Button,
 class DishesTable extends PowerGridComponent
 {
     use ActionButton;
-
-    public array $eventId = [];
 
     protected function getListeners()
     {
@@ -32,33 +29,21 @@ class DishesTable extends PowerGridComponent
         );
     }
 
-    public function openModal(array $params)
-    {
-        $this->eventId = $params;
-    }
+    public array $eventId = [];
 
     public function deletedEvent(array $params)
     {
         $this->eventId = $params;
     }
 
-    public function setUp(): array
+    public function setUp()
     {
-        $this->showCheckBox();
-
-        return [
-            Exportable::make('export')
-                ->striped()
-                ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
-
-            Header::make()
-                ->showToggleColumns()
-                ->showSearchInput(),
-
-            Footer::make()
-                ->showPerPage()
-                ->showRecordCount(),
-        ];
+        $this->showCheckBox()
+            ->showPerPage()
+            ->showRecordCount()
+            ->showToggleColumns()
+            ->showExportOption('download-test', ['excel', 'csv'])
+            ->showSearchInput();
     }
 
     public function datasource(): Builder
@@ -75,14 +60,7 @@ class DishesTable extends PowerGridComponent
         ];
     }
 
-    public function inputRangeConfig(): array
-    {
-        return [
-            'price' => ['thousands' => '.', 'decimal' => ','],
-        ];
-    }
-
-    public function addColumns(): PowerGridEloquent
+    public function addColumns(): ?PowerGridEloquent
     {
         $fmt = new NumberFormatter('ca_ES', NumberFormatter::CURRENCY);
 
@@ -91,7 +69,6 @@ class DishesTable extends PowerGridComponent
             ->addColumn('name')
             ->addColumn('storage_room')
             ->addColumn('chef_name')
-            ->addColumn('serving_at')
             ->addColumn('calories')
             ->addColumn('calories', function (Dish $dish) {
                 return $dish->calories . ' kcal';
@@ -133,6 +110,7 @@ class DishesTable extends PowerGridComponent
             Column::add()
                 ->title(__('ID'))
                 ->field('id')
+                ->withCount('Count ID', false, true)
                 ->searchable()
                 ->sortable(),
 
@@ -152,12 +130,6 @@ class DishesTable extends PowerGridComponent
                 ->sortable(),
 
             Column::add()
-                ->title('Serving at')
-                ->field('serving_at')
-                ->sortable()
-                ->makeInputSelect(Dish::servedAt(), 'serving_at', 'serving_at', ['live-search' => true]),
-
-            Column::add()
                 ->title(__('Chef'))
                 ->field('chef_name')
                 ->searchable()
@@ -174,16 +146,13 @@ class DishesTable extends PowerGridComponent
                 ->makeInputSelect(Category::all(), 'name', 'category_id'),
 
             Column::add()
-                ->title(__('Multiple'))
-                ->field('category_name')
-                ->placeholder('Categoria')
-                ->makeInputMultiSelect(Category::query()->take(5)->get(), 'name', 'category_id'),
-
-            Column::add()
                 ->title(__('Preço'))
                 ->field('price_BRL')
+                ->withSum('Sum Price', false, true)
+                ->withCount('Count Price', false, true)
+                ->withAvg('Avg Price', false, true)
                 ->editOnClick($canEdit, 'price')
-                ->makeInputRange('price'),
+                ->makeInputRange('price', '.', ','),
 
             Column::add()
                 ->title(__('Preço de Venda'))
@@ -218,7 +187,9 @@ class DishesTable extends PowerGridComponent
     {
         return [
             Button::add('edit-stock')
-                ->caption('<div id="edit">Edit</div>')
+                ->caption(new HtmlString(
+                    '<div id="edit">Edit</div>'
+                ))
                 ->class('text-center')
                 ->openModal('edit-stock', ['dishId' => 'id']),
 
@@ -228,6 +199,34 @@ class DishesTable extends PowerGridComponent
                 ->emit('deletedEvent', ['dishId' => 'id'])
                 ->method('delete'),
         ];
+    }
+
+    public function update(array $data): bool
+    {
+        try {
+            $updated = Dish::query()->find($data['id'])->update([
+                $data['field'] => $data['value'],
+            ]);
+        } catch (QueryException $exception) {
+            $updated = false;
+        }
+
+        return $updated;
+    }
+
+    public function updateMessages(string $status, string $field = '_default_message'): string
+    {
+        $updateMessages = [
+            'success' => [
+                '_default_message' => __('Data has been updated successfully!'),
+                'price_BRL'        => __('Preço alterado'),
+            ],
+            'error' => [
+                '_default_message' => __('Error updating the data.'),
+            ],
+        ];
+
+        return ($updateMessages[$status][$field] ?? $updateMessages[$status]['_default_message']);
     }
 
     public function bootstrap()

@@ -14,6 +14,7 @@ use PowerComponents\LivewirePowerGrid\Themes\Components\{Actions,
     FilterNumber,
     FilterSelect,
     Footer,
+    Row,
     Table,
     Toggleable};
 
@@ -21,10 +22,14 @@ class Bootstrap5 extends ThemeBase
 {
     public string $name = 'bootstrap5';
 
+    public static function paginationTheme(): string
+    {
+        return 'bootstrap';
+    }
+
     public function table(): Table
     {
         return Theme::table('table table-bordered table-hover table-striped table-checkable table-highlight-head mb-2')
-            ->div('table-responsive col-md-12', 'margin: 10px 0 10px;')
             ->thead('')
             ->tr('')
             ->th('', 'white-space: nowrap;min-width: 50px;padding-left: 15px;font-size: 0.75rem;color: #6b6a6a;padding-top: 8px;padding-bottom: 8px;')
@@ -41,6 +46,12 @@ class Bootstrap5 extends ThemeBase
             ->clearFilter('', 'color: #c30707; cursor:pointer; float: right;');
     }
 
+    public function rows(): Row
+    {
+        return Theme::row()
+            ->span('d-flex justify-content-between');
+    }
+
     public function footer(): Footer
     {
         return Theme::footer()
@@ -53,6 +64,11 @@ class Bootstrap5 extends ThemeBase
         return Theme::actions()
             ->tdBody('text-center')
             ->rowsBtn('');
+    }
+
+    public static function styles(): string
+    {
+        return 'bootstrap';
     }
 
     public function toggleable(): Toggleable
@@ -88,44 +104,52 @@ class Bootstrap5 extends ThemeBase
     public function filterBoolean(): FilterBoolean
     {
         return Theme::filterBoolean()
-            ->view($this->root() . '.filters.boolean')
-            ->select('form-control form-select shadow-none');
+            ->input('form-control shadow-none')
+            ->relativeDiv('d-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 
     public function filterDatePicker(): FilterDatePicker
     {
         return Theme::filterDatePicker()
-            ->view($this->root() . '.filters.date-picker')
-            ->input('form-control shadow-none');
+            ->input('form-control shadow-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 
     public function filterMultiSelect(): FilterMultiSelect
     {
         return Theme::filterMultiSelect()
-            ->view($this->root() . '.filters.multi-select');
+            ->view($this->root() . '.multi-select')
+            ->input('shadow-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 
     public function filterNumber(): FilterNumber
     {
         return Theme::filterNumber()
-            ->base(attrStyle: 'min-width: 85px !important')
-            ->view($this->root() . '.filters.number')
-            ->input('form-control shadow-none');
+            ->input('form-control shadow-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 
     public function filterSelect(): FilterSelect
     {
         return Theme::filterSelect()
-            ->view($this->root() . '.filters.select')
-            ->select('form-control form-select shadow-none');
+            ->input('form-control shadow-none')
+            ->relativeDiv('d-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 
     public function filterInputText(): FilterInputText
     {
         return Theme::filterInputText()
-            ->base(attrStyle: 'min-width: 165px !important')
-            ->view($this->root() . '.filters.input-text')
-            ->select('form-control mb-1 shadow-none form-select')
-            ->input('form-control shadow-none');
+            ->select('form-control mb-1 shadow-none', 'd-none')
+            ->input('form-control shadow-none')
+            ->divNotInline('')
+            ->divInline('');
     }
 }
